@@ -1,16 +1,4 @@
-import pygame
-
-
-def main():
-    pygame.init()
-    pygame.display.set_mode((1280, 720))
-    running = True
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
+from space_invaders.game import GameCoordinator
 
 if __name__ == "__main__":
-    main()
+    GameCoordinator().start()
