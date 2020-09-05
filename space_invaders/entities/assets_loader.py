@@ -4,6 +4,8 @@ import pygame
 
 root_path = Path().cwd().joinpath("../assets/sprites/")
 SPACESHIP = pygame.image.load(str(root_path.joinpath("player/ship.png").resolve()))
+ROCKET = pygame.image.load(str(root_path.joinpath("player/rocket.png").resolve()))
+
 
 ALIEN_A = pygame.image.load(str(root_path.joinpath("aliens/alien_a.png").resolve()))
 ALIEN_B = pygame.image.load(str(root_path.joinpath("aliens/alien_b.png").resolve()))
