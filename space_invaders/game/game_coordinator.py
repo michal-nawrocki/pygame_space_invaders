@@ -1,5 +1,6 @@
 import pygame
 
+from space_invaders.entities.player import Player
 from space_invaders.game.game_settings import GameSettings
 
 
@@ -10,13 +11,13 @@ class GameCoordinator:
 
     def _setup_pygame(self):
         pygame.init()
-        pygame.display.set_mode(
+        self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
         self.clock = pygame.time.Clock()
 
-    def _load_assets(self):
-        pass
+    def _prepare_game(self):
+        self.player = Player((20, 20))
 
     def _close(self):
         self.running = False
@@ -34,11 +35,13 @@ class GameCoordinator:
         pass
 
     def _render(self):
+        self.screen.blit(self.player.image, self.player.pos)
+        pygame.display.update()
         self.clock.tick(60)
 
     def start(self):
         self._setup_pygame()
-        self._load_assets()
+        self._prepare_game()
 
         while self.running:
             self._handle_inputs()
