@@ -66,6 +66,7 @@ class GameCoordinator:
                 self.projectiles.remove(entity)
 
             if entity.rect.colliderect(self.player.rect):
+                entity.to_be_removed = True
                 print("I've been hit")
 
     def _render(self):
