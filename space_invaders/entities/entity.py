@@ -22,7 +22,7 @@ class Entity(Sprite):
         self.to_be_removed = False
 
     def move_left(self, settings):
-        self.pos = (self.pos[0]-self._dx, self.pos[1])
+        self.pos = (self.pos[0] - self._dx, self.pos[1])
         if self.pos[0] < 0:
             self.pos = (0, self.pos[1])
 

@@ -1,12 +1,13 @@
+from pygame import sprite
+
 from space_invaders.entities import Entity
-from space_invaders.entities import assets_loader
 
 
 class Alien(Entity):
-    def __init__(self, pos: (int, int)):
+    def __init__(self, pos: (int, int), alien_sprite: sprite):
         super().__init__(
             pos,
-            assets_loader.ALIEN_A,
+            alien_sprite,
             x_speed=10,
             y_speed=10,
         )

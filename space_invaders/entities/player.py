@@ -11,6 +11,3 @@ class Player(Entity):
             x_speed=4,
             y_speed=4,
         )
-
-    def shoot_laser(self):
-        pass
