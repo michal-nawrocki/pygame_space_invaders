@@ -8,6 +8,7 @@ from space_invaders.entities import (
     Projectile,
 )
 from space_invaders.game.game_settings import GameSettings
+from space_invaders.game.setup_helpers import prepare_aliens_list
 
 
 class GameCoordinator:
@@ -36,21 +37,14 @@ class GameCoordinator:
         self.clock = pygame.time.Clock()
 
     def _prepare_game(self):
-        self.player = Player(pos=(self.settings.screen_width*0.5, self.settings.screen_height*0.9))
+        self.player = Player(
+            pos=(
+                self.settings.screen_width*0.5,
+                self.settings.screen_height*0.9
+            )
+        )
 
-        self.enemies.append(Alien(pos=(400, 300)))
-        self.enemies.append(Alien(pos=(450, 300)))
-        self.enemies.append(Alien(pos=(500, 300)))
-        self.enemies.append(Alien(pos=(550, 300)))
-        self.enemies.append(Alien(pos=(600, 300)))
-        self.enemies.append(Alien(pos=(650, 300)))
-
-        self.enemies.append(Alien(pos=(400, 350)))
-        self.enemies.append(Alien(pos=(450, 350)))
-        self.enemies.append(Alien(pos=(500, 350)))
-        self.enemies.append(Alien(pos=(550, 350)))
-        self.enemies.append(Alien(pos=(600, 350)))
-        self.enemies.append(Alien(pos=(650, 350)))
+        self.enemies = prepare_aliens_list(6, 6)
 
         self.screen.blit(self.player.image, self.player.pos)
 
