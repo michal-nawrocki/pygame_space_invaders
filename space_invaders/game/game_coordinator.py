@@ -8,8 +8,8 @@ from space_invaders.entities import (
     Projectile,
 )
 from space_invaders.game.game_settings import GameSettings
-from space_invaders.game.input_helpers import handle_keyboard_inputs
-from space_invaders.game.setup_helpers import prepare_aliens_list
+from space_invaders.game.helpers.input_helpers import handle_keyboard_inputs
+from space_invaders.game.helpers.setup_helpers import prepare_aliens_list
 
 
 class GameCoordinator:

@@ -1,6 +1,7 @@
 import pygame
 
 from space_invaders.entities import Projectile
+from space_invaders.game.helpers.time_helpers import has_time_passed
 
 
 def handle_keyboard_inputs(keys_pressed, game_instance):
@@ -13,10 +14,10 @@ def handle_keyboard_inputs(keys_pressed, game_instance):
         game_instance.player.move_right(game_instance.settings)
 
     if keys_pressed[pygame.K_SPACE]:
-        if (
-            game_instance.last_projectile_time == 0
-            or current_time - game_instance.last_projectile_time
-            >= game_instance.settings.min_delay_between_shots
+        if has_time_passed(
+            current_time,
+            game_instance.last_projectile_time,
+            game_instance.settings.min_delay_between_shots
         ):
             game_instance.projectiles.append(
                 Projectile(
@@ -33,10 +34,10 @@ def handle_keyboard_inputs(keys_pressed, game_instance):
             game_instance.last_projectile_time = current_time
 
     if keys_pressed[pygame.K_HOME]:
-        if (
-            game_instance.last_projectile_time == 0
-            or current_time - game_instance.last_projectile_time
-            >= game_instance.settings.min_delay_between_shots
+        if has_time_passed(
+            current_time,
+            game_instance.last_projectile_time,
+            game_instance.settings.min_delay_between_shots
         ):
             game_instance.projectiles.append(
                 Projectile(
