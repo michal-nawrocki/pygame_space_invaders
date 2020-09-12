@@ -8,6 +8,7 @@ from space_invaders.entities import (
     Projectile,
 )
 from space_invaders.game.game_settings import GameSettings
+from space_invaders.game.input_helpers import handle_keyboard_inputs
 from space_invaders.game.setup_helpers import prepare_aliens_list
 
 
@@ -26,26 +27,25 @@ class GameCoordinator:
         self.projectiles: [Projectile] = []
         self.enemies: [Alien] = []
         self.running = True
+        self.current_time = 0
 
     def _setup_pygame(self):
         pygame.init()
         pygame.font.init()
         self.font = pygame.font.Font(None, 27)
         self.screen = pygame.display.set_mode(
-            (self.settings.screen_width, self.settings.screen_height)
+            size=(self.settings.screen_width, self.settings.screen_height),
+            flags=pygame.SCALED,
         )
+        pygame.display.set_caption("Michal Nawrocki's Space Invaders")
         self.clock = pygame.time.Clock()
 
     def _prepare_game(self):
         self.player = Player(
-            pos=(
-                self.settings.screen_width*0.5,
-                self.settings.screen_height*0.9
-            )
+            pos=(self.settings.screen_width * 0.5, self.settings.screen_height * 0.9)
         )
 
         self.enemies = prepare_aliens_list(6, 6)
-
         self.screen.blit(self.player.image, self.player.pos)
 
         for entity in self.enemies:
@@ -58,24 +58,7 @@ class GameCoordinator:
     def _handle_inputs(self):
         pygame.event.pump()
         keys_pressed = pygame.key.get_pressed()
-
-        if keys_pressed[pygame.K_a] or keys_pressed[pygame.K_LEFT]:
-            self.player.move_left(self.settings)
-
-        if keys_pressed[pygame.K_d] or keys_pressed[pygame.K_RIGHT]:
-            self.player.move_right(self.settings)
-
-        if keys_pressed[pygame.K_SPACE]:
-            current_time = pygame.time.get_ticks()
-            if self.last_projectile_time == 0 or current_time - self.last_projectile_time >= self.settings.min_delay_between_shots:
-                self.projectiles.append(Projectile(pos=(self.player.pos[0] + self.player.image.get_width()/2 - 3, self.player.pos[1] - 20), speed_y=-5, speed_x=0))
-                self.last_projectile_time = current_time
-
-        if keys_pressed[pygame.K_HOME]:
-            current_time = pygame.time.get_ticks()
-            if self.last_projectile_time == 0 or current_time - self.last_projectile_time >= self.settings.min_delay_between_shots:
-                self.projectiles.append(Projectile(pos=(self.player.pos[0] + self.player.image.get_width()/2 - 3, 0), speed_y=10, speed_x=0, is_enemy=True))
-                self.last_projectile_time = current_time
+        handle_keyboard_inputs(keys_pressed, self)
 
     def _update_positions(self):
         current_time = pygame.time.get_ticks()
@@ -88,16 +71,24 @@ class GameCoordinator:
                 entity.move_in_pattern(
                     self.settings,
                     horizontal_dir=self.enemies_direction,
-                    move_down=self.enemies_move_down
+                    move_down=self.enemies_move_down,
                 )
             self.enemies_move_down = False
             self.alien_move_delay = current_time
 
         if self.alien_shoot_delay == 0 or current_time - self.alien_shoot_delay >= 1000:
-            entity = self.enemies[random.randint(0, len(self.enemies)-1)]
+            entity = self.enemies[random.randint(0, len(self.enemies) - 1)]
             self.projectiles.append(
-                Projectile(pos=(entity.pos[0] + self.player.image.get_width() / 2 - 3, entity.pos[1]), speed_y=3,
-                           speed_x=0, is_enemy=True))
+                Projectile(
+                    pos=(
+                        entity.pos[0] + self.player.image.get_width() / 2 - 3,
+                        entity.pos[1],
+                    ),
+                    speed_y=3,
+                    speed_x=0,
+                    is_enemy=True,
+                )
+            )
             self.alien_shoot_delay = current_time
 
     def _play_sounds(self):

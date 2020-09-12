@@ -22,15 +22,12 @@ def prepare_aliens_list(rows: int, cols: int) -> [Alien]:
     alien_list = []
     cord_gap = 50
     x_start = 400
-    y_cord = 300
+    y_cord = 100
 
     for row in range(0, rows):
         x_cord = x_start
         for _ in range(0, cols):
-            alien = Alien(
-                pos=(x_cord, y_cord),
-                alien_sprite=_get_alien_sprite(row)
-            )
+            alien = Alien(pos=(x_cord, y_cord), alien_sprite=_get_alien_sprite(row))
             alien_list.insert(0, alien)
 
             x_cord += cord_gap

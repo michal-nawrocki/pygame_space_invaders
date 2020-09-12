@@ -1,5 +1,5 @@
 class GameSettings:
-    def __init__(self, width=1280, height=720):
+    def __init__(self, width=800, height=600):
         self.max_player_projectiles = 5
         self.min_delay_between_shots = 500
         self._screen_width = width

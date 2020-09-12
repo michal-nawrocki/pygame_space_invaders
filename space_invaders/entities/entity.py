@@ -10,7 +10,6 @@ class Entity(Sprite):
         health: int = 0,
         x_speed: int = 0,
         y_speed: int = 0,
-
     ):
         super().__init__()
         self.image = sprite
@@ -29,7 +28,7 @@ class Entity(Sprite):
         self.rect.center = self.pos
 
     def move_right(self, settings):
-        self.pos = (self.pos[0]+self._dx, self.pos[1])
+        self.pos = (self.pos[0] + self._dx, self.pos[1])
         if self.pos[0] > settings.screen_width - self.image.get_width():
             self.pos = (settings.screen_width - self.image.get_width(), self.pos[1])
 
