@@ -10,24 +10,25 @@ from space_invaders.entities import (
 from space_invaders.game.game_settings import GameSettings
 from space_invaders.game.helpers.input_helpers import handle_keyboard_inputs
 from space_invaders.game.helpers.setup_helpers import prepare_aliens_list
+from space_invaders.game.helpers.time_helpers import has_time_passed
 
 
 class GameCoordinator:
     def __init__(self):
-        self.player_projectiles = 0
-        self.last_projectile_time = 0
-        self.horizontal_delay = 0
-        self.vertical_delay = 0
         self.alien_move_delay = 0
         self.alien_shoot_delay = 0
         self.count_rebounds = 0
+        self.current_time = 0
+        self.enemies: [Alien] = []
         self.enemies_direction = -1
         self.enemies_move_down = False
-        self.settings = GameSettings()
+        self.horizontal_delay = 0
+        self.last_projectile_time = 0
+        self.player_projectiles = 0
         self.projectiles: [Projectile] = []
-        self.enemies: [Alien] = []
         self.running = True
-        self.current_time = 0
+        self.settings = GameSettings()
+        self.vertical_delay = 0
 
     def _setup_pygame(self):
         pygame.init()
@@ -61,12 +62,16 @@ class GameCoordinator:
         handle_keyboard_inputs(keys_pressed, self)
 
     def _update_positions(self):
-        current_time = pygame.time.get_ticks()
         # Move all projectiles up or down
         for entity in self.projectiles:
             entity.move_vertical(self.settings)
 
-        if self.alien_move_delay == 0 or current_time - self.alien_move_delay >= 300:
+        # Check if should update position of aliens
+        if has_time_passed(
+            current_time=self.current_time,
+            last_time=self.alien_move_delay,
+            delay=self.settings.alien_move_interval
+        ):
             for entity in self.enemies:
                 entity.move_in_pattern(
                     self.settings,
@@ -74,10 +79,62 @@ class GameCoordinator:
                     move_down=self.enemies_move_down,
                 )
             self.enemies_move_down = False
-            self.alien_move_delay = current_time
+            self.alien_move_delay = self.current_time
 
-        if self.alien_shoot_delay == 0 or current_time - self.alien_shoot_delay >= 1000:
-            entity = self.enemies[random.randint(0, len(self.enemies) - 1)]
+    def _play_sounds(self):
+        pass
+
+    def _do_collisions(self):
+        # Handle collisions of projectiles
+        for entity in self.projectiles:
+
+            # Check if Player has been hit
+            if entity.rect.colliderect(self.player.rect):
+                entity.to_be_removed = True
+                self.running = False
+                print("I've been hit")
+
+            # Check if it's players rocket and if it hit alien
+            if not entity.is_enemy:
+                for alien in self.enemies:
+                    if alien.rect.colliderect(entity.rect):
+                        entity.to_be_removed = True
+                        alien.to_be_removed = True
+                        break
+
+            # Check if rocket should be removed
+            if entity.to_be_removed:
+                self.projectiles.remove(entity)
+
+        # Remove destroyed aliens
+        for entity in self.enemies:
+            if entity.to_be_removed:
+                self.enemies.remove(entity)
+
+    def _handle_ai(self):
+        # Check if aliens should move one level down
+        if self.count_rebounds == 4:
+            self.enemies_move_down = True
+            self.count_rebounds = 0
+
+        # Check if aliens should change move direction
+        if has_time_passed(
+            current_time=self.current_time,
+            last_time=self.horizontal_delay,
+            delay=self.settings.alien_change_direction_interval
+        ):
+            self.enemies_direction = -1 if self.enemies_direction != -1 else 1
+            self.horizontal_delay = self.current_time
+            self.count_rebounds += 1
+
+        # Check if the alien should try to shoot
+        if has_time_passed(
+            current_time=self.current_time,
+            last_time=self.alien_shoot_delay,
+            delay=self.settings.alien_shot_interval
+        ):
+            random_index = random.randint(0, len(self.enemies) - 1)
+            entity = self.enemies[random_index]
             self.projectiles.append(
                 Projectile(
                     pos=(
@@ -89,45 +146,10 @@ class GameCoordinator:
                     is_enemy=True,
                 )
             )
-            self.alien_shoot_delay = current_time
-
-    def _play_sounds(self):
-        pass
-
-    def _do_collisions(self):
-        # Handle collisions of projectiles
-        for entity in self.projectiles:
-            if entity.rect.colliderect(self.player.rect):
-                entity.to_be_removed = True
-                self.running = False
-                print("I've been hit")
-
-            for alien in self.enemies:
-                if not entity.is_enemy and alien.rect.colliderect(entity.rect):
-                    entity.to_be_removed = True
-                    alien.to_be_removed = True
-
-            if entity.to_be_removed:
-                self.projectiles.remove(entity)
-
-        # Remove destroyed aliens
-        for entity in self.enemies:
-            if entity.to_be_removed:
-                self.enemies.remove(entity)
-
-    def _handle_ai(self):
-        current_time = pygame.time.get_ticks()
-
-        if self.count_rebounds == 4:
-            self.enemies_move_down = True
-            self.count_rebounds = 0
-
-        if self.horizontal_delay == 0 or current_time - self.horizontal_delay >= 4000:
-            self.enemies_direction = -1 if self.enemies_direction != -1 else 1
-            self.horizontal_delay = current_time
-            self.count_rebounds += 1
+            self.alien_shoot_delay = self.current_time
 
     def _render(self):
+        # Reset screen to black
         self.screen.fill((0, 0, 0))
 
         #  Draw player
@@ -155,6 +177,7 @@ class GameCoordinator:
         self._prepare_game()
 
         while self.running:
+            self.current_time = pygame.time.get_ticks()
             self._handle_inputs()
             self._update_positions()
             self._handle_ai()
