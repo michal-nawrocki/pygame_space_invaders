@@ -155,7 +155,7 @@ class GameCoordinator:
                     is_enemy=True,
                 )
             )
-            self.alien_shoot_delay = self.current_timed
+            self.alien_shoot_delay = self.current_time
 
     def _render(self):
         # Reset screen to black
