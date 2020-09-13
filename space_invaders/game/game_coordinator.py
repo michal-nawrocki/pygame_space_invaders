@@ -87,7 +87,6 @@ class GameCoordinator:
     def _do_collisions(self):
         # Handle collisions of projectiles
         for entity in self.projectiles:
-
             # Check if Player has been hit
             if entity.rect.colliderect(self.player.rect):
                 entity.to_be_removed = True
