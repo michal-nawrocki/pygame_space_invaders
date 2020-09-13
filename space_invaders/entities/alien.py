@@ -4,7 +4,12 @@ from space_invaders.entities import Entity
 
 
 class Alien(Entity):
-    def __init__(self, pos: (int, int), alien_sprite: sprite):
+    def __init__(
+            self,
+            pos: (int, int),
+            alien_sprite: sprite,
+            score: int
+    ):
         super().__init__(
             pos,
             alien_sprite,
@@ -12,6 +17,7 @@ class Alien(Entity):
             y_speed=10,
         )
         self.rect.inflate_ip(15, 5)
+        self.score = score
 
     def move_in_pattern(self, settings, horizontal_dir, move_down):
         if move_down:

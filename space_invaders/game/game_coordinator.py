@@ -3,6 +3,7 @@ import random
 import pygame
 
 from space_invaders.entities import (
+    assets_loader,
     Alien,
     Bunker,
     Player,
@@ -27,6 +28,7 @@ class GameCoordinator:
         self.horizontal_delay = 0
         self.last_projectile_time = 0
         self.player_projectiles = 0
+        self.player_score = 0
         self.projectiles: [Projectile] = []
         self.running = True
         self.settings = GameSettings()
@@ -34,8 +36,7 @@ class GameCoordinator:
 
     def _setup_pygame(self):
         pygame.init()
-        pygame.font.init()
-        self.font = pygame.font.Font(None, 27)
+        self.font = assets_loader.FONT_8BIT
         self.screen = pygame.display.set_mode(
             size=(self.settings.screen_width, self.settings.screen_height),
             flags=pygame.SCALED,
@@ -50,10 +51,10 @@ class GameCoordinator:
 
         self.enemies = prepare_aliens_list(6, 11)
 
-        self.bunkers.append(Bunker((150, 500)))
-        self.bunkers.append(Bunker((300, 500)))
-        self.bunkers.append(Bunker((450, 500)))
-        self.bunkers.append(Bunker((600, 500)))
+        self.bunkers.append(Bunker((250, 500)))
+        self.bunkers.append(Bunker((400, 500)))
+        self.bunkers.append(Bunker((550, 500)))
+        self.bunkers.append(Bunker((700, 500)))
         self.screen.blit(self.player.image, self.player.pos)
 
         for entity in self.enemies:
@@ -112,6 +113,7 @@ class GameCoordinator:
             if not entity.is_enemy:
                 for alien in self.enemies:
                     if alien.rect.colliderect(entity.rect):
+                        self.player_score += alien.score
                         self.enemies.remove(alien)
                         self.projectiles.remove(entity)
                         break
@@ -177,11 +179,11 @@ class GameCoordinator:
         for entity in self.projectiles:
             self.screen.blit(entity.image, entity.pos)
 
-        # # Draw text
-        # text = self.font.render(
-        #     f"Self.enemies_move_down: {self.enemies_move_down}", True, (0, 255, 0), (0, 0, 0)
-        # )
-        # self.screen.blit(text, (0, 0))
+        # Draw text
+        score_text = self.font.render(
+            f"SCORE: {self.player_score}", True, (0, 255, 0), (0, 0, 0)
+        )
+        self.screen.blit(score_text, (10, 0))
 
         pygame.display.update()
         self.clock.tick(60)
