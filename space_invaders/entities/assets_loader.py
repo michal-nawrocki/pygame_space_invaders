@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pygame
 
-root_path = Path().cwd().joinpath("../assets/sprites/")
+root_path = Path().cwd().joinpath("assets/sprites/")
 SPACESHIP = pygame.image.load(str(root_path.joinpath("player/ship.png").resolve()))
 ROCKET = pygame.image.load(str(root_path.joinpath("player/rocket.png").resolve()))
 
