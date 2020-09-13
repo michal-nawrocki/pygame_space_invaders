@@ -21,7 +21,7 @@ def _get_alien_sprite(row) -> sprite:
 def prepare_aliens_list(rows: int, cols: int) -> [Alien]:
     alien_list = []
     cord_gap = 50
-    x_start = 400
+    x_start = 150
     y_cord = 100
 
     for row in range(0, rows):

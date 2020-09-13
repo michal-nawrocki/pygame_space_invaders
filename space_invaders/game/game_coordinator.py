@@ -4,6 +4,7 @@ import pygame
 
 from space_invaders.entities import (
     Alien,
+    Bunker,
     Player,
     Projectile,
 )
@@ -17,6 +18,7 @@ class GameCoordinator:
     def __init__(self):
         self.alien_move_delay = 0
         self.alien_shoot_delay = 0
+        self.bunkers: [Bunker] = []
         self.count_rebounds = 0
         self.current_time = 0
         self.enemies: [Alien] = []
@@ -46,7 +48,12 @@ class GameCoordinator:
             pos=(self.settings.screen_width * 0.5, self.settings.screen_height * 0.9)
         )
 
-        self.enemies = prepare_aliens_list(6, 6)
+        self.enemies = prepare_aliens_list(6, 11)
+
+        self.bunkers.append(Bunker((150, 500)))
+        self.bunkers.append(Bunker((300, 500)))
+        self.bunkers.append(Bunker((450, 500)))
+        self.bunkers.append(Bunker((600, 500)))
         self.screen.blit(self.player.image, self.player.pos)
 
         for entity in self.enemies:
@@ -89,26 +96,29 @@ class GameCoordinator:
         for entity in self.projectiles:
             # Check if Player has been hit
             if entity.rect.colliderect(self.player.rect):
-                entity.to_be_removed = True
+                self.projectiles.remove(entity)
                 self.running = False
                 print("I've been hit")
+
+            # Check if a BunkerBlock has been hit
+            for bunker in self.bunkers:
+                for block in bunker.bunker_blocks:
+                    if block.rect.colliderect(entity.rect):
+                        bunker.bunker_blocks.remove(block)
+                        self.projectiles.remove(entity)
+                        break
 
             # Check if it's players rocket and if it hit alien
             if not entity.is_enemy:
                 for alien in self.enemies:
                     if alien.rect.colliderect(entity.rect):
-                        entity.to_be_removed = True
-                        alien.to_be_removed = True
+                        self.enemies.remove(alien)
+                        self.projectiles.remove(entity)
                         break
 
             # Check if rocket should be removed
             if entity.to_be_removed:
                 self.projectiles.remove(entity)
-
-        # Remove destroyed aliens
-        for entity in self.enemies:
-            if entity.to_be_removed:
-                self.enemies.remove(entity)
 
     def _handle_ai(self):
         # Check if aliens should move one level down
@@ -145,7 +155,7 @@ class GameCoordinator:
                     is_enemy=True,
                 )
             )
-            self.alien_shoot_delay = self.current_time
+            self.alien_shoot_delay = self.current_timed
 
     def _render(self):
         # Reset screen to black
@@ -153,6 +163,11 @@ class GameCoordinator:
 
         #  Draw player
         self.screen.blit(self.player.image, self.player.pos)
+
+        # Draw bunkers
+        for bunker in self.bunkers:
+            for block in bunker.bunker_blocks:
+                self.screen.blit(block.image, block.pos)
 
         # Draw enemies
         for entity in self.enemies:
