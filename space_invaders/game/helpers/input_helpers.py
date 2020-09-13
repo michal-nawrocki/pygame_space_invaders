@@ -17,7 +17,7 @@ def handle_keyboard_inputs(keys_pressed, game_instance):
         if has_time_passed(
             current_time,
             game_instance.last_projectile_time,
-            game_instance.settings.min_delay_between_shots
+            game_instance.settings.player_shot_interval
         ):
             game_instance.projectiles.append(
                 Projectile(
