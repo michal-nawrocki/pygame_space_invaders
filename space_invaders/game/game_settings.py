@@ -1,7 +1,9 @@
 class GameSettings:
-    def __init__(self, width=1280, height=720):
-        self.max_player_projectiles = 5
-        self.min_delay_between_shots = 500
+    def __init__(self, width=800, height=600):
+        self._alien_move_delay_interval = 300
+        self._alien_shoot_delay_interval = 1000
+        self._alien_change_dir_interval = 4000
+        self._player_shots_delay = 500
         self._screen_width = width
         self._screen_height = height
 
@@ -20,3 +22,35 @@ class GameSettings:
     @screen_width.setter
     def screen_width(self, screen_width):
         self._screen_width = screen_width
+
+    @property
+    def alien_change_direction_interval(self):
+        return self._alien_change_dir_interval
+
+    @alien_change_direction_interval.setter
+    def alien_change_direction_interval(self, interval):
+        self._alien_change_dir_interval = interval
+
+    @property
+    def alien_move_interval(self):
+        return self._alien_move_delay_interval
+
+    @alien_move_interval.setter
+    def alien_move_interval(self, interval):
+        self._alien_move_delay_interval = interval
+
+    @property
+    def alien_shot_interval(self):
+        return self._alien_shoot_delay_interval
+
+    @alien_shot_interval.setter
+    def alien_shot_interval(self, interval):
+        self.alien_shot_interval = interval
+
+    @property
+    def player_shot_interval(self):
+        return self._player_shots_delay
+
+    @player_shot_interval.setter
+    def player_shot_interval(self, interval):
+        self._player_shots_delay = interval
