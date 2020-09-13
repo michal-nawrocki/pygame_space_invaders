@@ -18,16 +18,25 @@ def _get_alien_sprite(row) -> sprite:
     return ALIEN_SPRITE_LIST[index]
 
 
+def _get_alien_score(row, rows) -> int:
+    index = row % len(ALIEN_SPRITE_LIST)
+    return (rows - index) * 500
+
+
 def prepare_aliens_list(rows: int, cols: int) -> [Alien]:
     alien_list = []
     cord_gap = 50
-    x_start = 150
-    y_cord = 100
+    x_start = 250
+    y_cord = 75
 
     for row in range(0, rows):
         x_cord = x_start
         for _ in range(0, cols):
-            alien = Alien(pos=(x_cord, y_cord), alien_sprite=_get_alien_sprite(row))
+            alien = Alien(
+                pos=(x_cord, y_cord),
+                alien_sprite=_get_alien_sprite(row),
+                score=_get_alien_score(row, rows)
+            )
             alien_list.insert(0, alien)
 
             x_cord += cord_gap

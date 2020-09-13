@@ -1,8 +1,8 @@
 class GameSettings:
-    def __init__(self, width=800, height=600):
+    def __init__(self, width=1024, height=576):
         self._alien_move_delay_interval = 300
         self._alien_shoot_delay_interval = 1000
-        self._alien_change_dir_interval = 4000
+        self._alien_change_dir_interval = 6000
         self._player_shots_delay = 500
         self._screen_width = width
         self._screen_height = height
